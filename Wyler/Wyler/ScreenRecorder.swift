@@ -18,17 +18,25 @@ final public class ScreenRecorder {
 
   public init() {}
 
+  /**
+   Starts recording the content of the application screen. It works together with stopRecording
+
+  - Parameter outputURL: The output where the video will be saved. If nil, it saves it in the documents directory.
+  - Parameter size: The size of the video. If nil, it will use the app screen size.
+  - Parameter saveToCameraRoll: Whether to save it to camera roll. False by default.
+  - Parameter errorHandler: Called when an error is found
+  */
   public func startRecording(to outputURL: URL? = nil,
                              size: CGSize? = nil,
                              saveToCameraRoll: Bool = false,
-                             error: @escaping (Error) -> Void) {
+                             errorHandler: @escaping (Error) -> Void) {
     if saveToCameraRoll {
       checkPhotoLibraryAuthorizationStatus()
     }
 
-    createVideoWriter(in: outputURL, error: error)
+    createVideoWriter(in: outputURL, error: errorHandler)
     addVideoWriterInput(size: size)
-    startCapture(error: error)
+    startCapture(error: errorHandler)
   }
 
   private func checkPhotoLibraryAuthorizationStatus() {
@@ -107,6 +115,11 @@ final public class ScreenRecorder {
     }
   }
 
+  /**
+   Stops recording the content of the application screen, after calling startRecording
+
+  - Parameter errorHandler: Called when an error is found
+  */
   public func stoprecording(errorHandler: @escaping (Error) -> Void) {
     RPScreenRecorder.shared().stopCapture( handler: { error in
       if let error = error {

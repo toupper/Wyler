@@ -42,7 +42,7 @@ final class ViewController: UIViewController {
 
     animateBall()
 
-    screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn, error: { error in
+    screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn, errorHandler: { error in
       debugPrint("Error when recording \(error)")
     })
   }
