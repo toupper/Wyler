@@ -59,18 +59,6 @@ import Wyler
 ```ogdl
 github "toupper/Wyler"
 ```
-
-### Swift Package Manager
-
-The [Swift Package Manager](https://swift.org/package-manager/) is a tool for automating the distribution of Swift code and is integrated into the `swift` compiler. It is in early development, but Alamofire does support its use on supported platforms.
-
-Once you have your Swift package set up, adding Wyler as a dependency is as easy as adding it to the `dependencies` value of your `Package.swift`.
-
-```swift
-dependencies: [
-    .package(url: "https://github.com/toupper/Wyler.git", .upToNextMajor(from: "0.1.2"))
-]
-```
 ## Manually
 
 You can also integrate Wyler into your project manually.
