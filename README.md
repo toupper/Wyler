@@ -36,7 +36,7 @@ Welcome to **Wyler** — A light library written in Swift that makes easy the pr
 - Xcode 11.0+
 
 ## Installation
-Since Codextended is implemented within a single file, the easiest way to use it is to simply drag and drop it into your Xcode project. If anyways you want to use a dependency manager:
+Since Wyler is implemented within a single file, the easiest way to use it is to simply drag and drop it into your Xcode project. If anyways you want to use a dependency manager:
 
 #### CocoaPods
 You can use [CocoaPods](http://cocoapods.org/) to install `Wyler` by adding it to your `Podfile`:
