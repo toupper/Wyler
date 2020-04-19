@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 import QuartzCore
 import Wyler
+import AVFoundation
 
 final class ViewController: UIViewController {
   @IBOutlet weak var bouncingBall: UIView!
@@ -18,6 +19,7 @@ final class ViewController: UIViewController {
   @IBOutlet weak var cameraRollSwitch: UISwitch!
   @IBOutlet weak var cameraRollLabel: UILabel!
 
+  private var player: AVAudioPlayer?
   private let screenRecorder = ScreenRecorder()
 
   override func viewDidLoad() {
@@ -40,11 +42,28 @@ final class ViewController: UIViewController {
   @IBAction func startRecordingButtonWasPressed(_ sender: Any) {
     enableElements(isRecording: true)
 
+    playSound()
     animateBall()
 
     screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn, errorHandler: { error in
       debugPrint("Error when recording \(error)")
     })
+  }
+
+  private func playSound() {
+      guard let url = Bundle.main.url(forResource: "MP3Sample", withExtension: "mp3") else { return }
+
+      do {
+          try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+          try AVAudioSession.sharedInstance().setActive(true)
+
+          player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
+
+          player?.play()
+
+      } catch let error {
+          print(error.localizedDescription)
+      }
   }
 
   private func enableElements(isRecording: Bool) {

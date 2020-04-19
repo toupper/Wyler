@@ -17,6 +17,7 @@
 		370DA4EA244367A700BAB2B7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 370DA4E9244367A700BAB2B7 /* ViewController.swift */; };
 		370DA4EC2443710500BAB2B7 /* Wyler.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 370DA4C12440D8C300BAB2B7 /* Wyler.framework */; };
 		370DA4ED2443710500BAB2B7 /* Wyler.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 370DA4C12440D8C300BAB2B7 /* Wyler.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		37B519B7244C71D30048B034 /* MP3Sample.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 37B519B6244C71D30048B034 /* MP3Sample.mp3 */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		370DA4E42440D96900BAB2B7 /* ScreenRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenRecorder.swift; sourceTree = "<group>"; };
 		370DA4E72443678400BAB2B7 /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		370DA4E9244367A700BAB2B7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		37B519B6244C71D30048B034 /* MP3Sample.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = MP3Sample.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 		370DA4D12440D8DA00BAB2B7 /* SampleApp */ = {
 			isa = PBXGroup;
 			children = (
+				37B519B6244C71D30048B034 /* MP3Sample.mp3 */,
 				370DA4E9244367A700BAB2B7 /* ViewController.swift */,
 				370DA4E72443678400BAB2B7 /* Main.storyboard */,
 				370DA4D22440D8DA00BAB2B7 /* AppDelegate.swift */,
@@ -238,6 +241,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				370DA4DF2440D8DE00BAB2B7 /* LaunchScreen.storyboard in Resources */,
+				37B519B7244C71D30048B034 /* MP3Sample.mp3 in Resources */,
 				370DA4DC2440D8DE00BAB2B7 /* Preview Assets.xcassets in Resources */,
 				370DA4D92440D8DE00BAB2B7 /* Assets.xcassets in Resources */,
 				370DA4E82443678400BAB2B7 /* Main.storyboard in Resources */,

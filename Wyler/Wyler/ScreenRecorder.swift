@@ -18,7 +18,8 @@ final public class ScreenRecorder {
   private var videoOutputURL: URL?
   private var videoWriter: AVAssetWriter?
   private var videoWriterInput: AVAssetWriterInput?
-  private var audioWriterInput: AVAssetWriterInput?
+  private var micAudioWriterInput: AVAssetWriterInput?
+  private var appAudioWriterInput: AVAssetWriterInput?
   private var saveToCameraRoll = false
   let recorder = RPScreenRecorder.shared()
 
@@ -40,7 +41,8 @@ final public class ScreenRecorder {
                              errorHandler: @escaping (Error) -> Void) {
     createVideoWriter(in: outputURL, error: errorHandler)
     addVideoWriterInput(size: size)
-    addAudioWriterInput()
+    self.micAudioWriterInput = createAndAddAudioInput()
+    self.appAudioWriterInput = createAndAddAudioInput()
     startCapture(error: errorHandler)
   }
 
@@ -89,8 +91,8 @@ final public class ScreenRecorder {
     newVideoWriterInput.expectsMediaDataInRealTime = true
     videoWriter?.add(newVideoWriterInput)
   }
-
-  private func addAudioWriterInput() {
+  
+  private func createAndAddAudioInput() -> AVAssetWriterInput {
     let settings = [
         AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
         AVSampleRateKey: 12000,
@@ -99,10 +101,11 @@ final public class ScreenRecorder {
     ]
 
     let audioInput = AVAssetWriterInput(mediaType: .audio, outputSettings: settings)
-    self.audioWriterInput = audioInput
 
     audioInput.expectsMediaDataInRealTime = true
     videoWriter?.add(audioInput)
+    
+    return audioInput
   }
 
   private func startCapture(error: @escaping (Error) -> Void) {
@@ -115,10 +118,10 @@ final public class ScreenRecorder {
       switch sampleType {
       case .video:
         self.handleSampleBuffer(sampleBuffer: sampleBuffer)
-      case .audioApp, .audioMic:
-        if self.audioWriterInput?.isReadyForMoreMediaData ?? false {
-          self.audioWriterInput?.append(sampleBuffer)
-        }
+      case .audioApp:
+        self.add(sample: sampleBuffer, to: self.appAudioWriterInput)
+      case .audioMic:
+        self.add(sample: sampleBuffer, to: self.micAudioWriterInput)
       default:
         break
       }
@@ -132,6 +135,12 @@ final public class ScreenRecorder {
     } else if self.videoWriter?.status == AVAssetWriter.Status.writing &&
       self.videoWriterInput?.isReadyForMoreMediaData == true {
       self.videoWriterInput?.append(sampleBuffer)
+    }
+  }
+  
+  private func add(sample: CMSampleBuffer, to writerInput: AVAssetWriterInput?) {
+    if writerInput?.isReadyForMoreMediaData ?? false {
+      writerInput?.append(sample)
     }
   }
 
@@ -148,7 +157,8 @@ final public class ScreenRecorder {
     })
 
     self.videoWriterInput?.markAsFinished()
-    self.audioWriterInput?.markAsFinished()
+    self.micAudioWriterInput?.markAsFinished()
+    self.appAudioWriterInput?.markAsFinished()
     self.videoWriter?.finishWriting {
       self.saveVideoToCameraRollAfterAuthorized(errorHandler: errorHandler)
     }
