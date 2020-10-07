@@ -14,7 +14,7 @@ public enum WylerError: Error {
   case photoLibraryAccessNotGranted
 }
 
-final public class ScreenRecorder {
+@objc final public class ScreenRecorder: NSObject {
   private var videoOutputURL: URL?
   private var videoWriter: AVAssetWriter?
   private var videoWriterInput: AVAssetWriterInput?
@@ -23,7 +23,7 @@ final public class ScreenRecorder {
   private var saveToCameraRoll = false
   let recorder = RPScreenRecorder.shared()
 
-  public init() {
+  public override init() {
     recorder.isMicrophoneEnabled = true
   }
 
@@ -35,8 +35,8 @@ final public class ScreenRecorder {
   - Parameter saveToCameraRoll: Whether to save it to camera roll. False by default.
   - Parameter errorHandler: Called when an error is found
   */
-  public func startRecording(to outputURL: URL? = nil,
-                             size: CGSize? = nil,
+  @objc public func startRecording(to outputURL: URL? = nil,
+                             size: CGSize,
                              saveToCameraRoll: Bool = false,
                              errorHandler: @escaping (Error) -> Void) {
     createVideoWriter(in: outputURL, error: errorHandler)
@@ -149,7 +149,7 @@ final public class ScreenRecorder {
 
   - Parameter errorHandler: Called when an error is found
   */
-  public func stoprecording(errorHandler: @escaping (Error) -> Void) {
+  @objc public func stoprecording(errorHandler: @escaping (Error) -> Void) {
     RPScreenRecorder.shared().stopCapture( handler: { error in
       if let error = error {
         errorHandler(error)
