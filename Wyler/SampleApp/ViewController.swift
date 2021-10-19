@@ -15,6 +15,7 @@ import AVFoundation
 final class ViewController: UIViewController {
   @IBOutlet weak var bouncingBall: UIView!
   @IBOutlet weak var startRecordingButton: UIButton!
+  @IBOutlet weak var startRecordingWithoutAudioButton: UIButton!
   @IBOutlet weak var stopRecordingButton: UIButton!
   @IBOutlet weak var cameraRollSwitch: UISwitch!
   @IBOutlet weak var cameraRollLabel: UILabel!
@@ -39,13 +40,27 @@ final class ViewController: UIViewController {
     })
   }
 
-  @IBAction func startRecordingButtonWasPressed(_ sender: Any) {
+    @IBAction func startRecordingButtonWasPressed(_ sender: Any) {
     enableElements(isRecording: true)
 
     playSound()
     animateBall()
 
-    screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn, errorHandler: { error in
+        screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn,
+                                  errorHandler: { error in
+      debugPrint("Error when recording \(error)")
+    })
+  }
+    
+    @IBAction func startRecordingButtonWithoutAudioWasPressed(_ sender: Any) {
+    enableElements(isRecording: true)
+
+    playSound()
+    animateBall()
+
+        screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn,
+                                      recordAudio: false,
+                                  errorHandler: { error in
       debugPrint("Error when recording \(error)")
     })
   }
@@ -68,6 +83,7 @@ final class ViewController: UIViewController {
 
   private func enableElements(isRecording: Bool) {
     startRecordingButton.isEnabled = !isRecording
+    startRecordingWithoutAudioButton.isEnabled = !isRecording
     stopRecordingButton.isEnabled = isRecording
     cameraRollSwitch.isEnabled = !isRecording
     cameraRollLabel.isEnabled = !isRecording
