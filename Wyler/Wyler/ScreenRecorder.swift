@@ -24,10 +24,6 @@ final public class ScreenRecorder {
   private var saveToCameraRoll = false
   let recorder = RPScreenRecorder.shared()
 
-  public init() {
-    recorder.isMicrophoneEnabled = true
-  }
-
   /**
    Starts recording the content of the application screen. It works together with stopRecording
 
@@ -40,6 +36,7 @@ final public class ScreenRecorder {
                              size: CGSize? = nil,
                              saveToCameraRoll: Bool = false,
                              handler: @escaping (Error?) -> Void) {
+    recorder.isMicrophoneEnabled = true
     do {
         try createVideoWriter(in: outputURL)
         addVideoWriterInput(size: size)
