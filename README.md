@@ -91,7 +91,7 @@ screenRecorder.startRecording(saveToCameraRoll: true, errorHandler: { error in
   debugPrint("Error when recording \(error)")
 })
 ```
-If you want to access the video or set a different size than the App screen, you can pass these parameters:
+If you want to access the video, turn off audio recording, or set a different size than the App screen, you can pass these parameters:
 
 ```swift
 import Wyler
@@ -99,6 +99,7 @@ import Wyler
 screenRecorder.startRecording(to: yourInternalURL,
                               size: yourSize,
                               saveToCameraRoll: true, 
+                              recordAudio: shouldRecordAudio,
                               errorHandler: { error in
                                 debugPrint("Error when recording \(error)")
                               })
