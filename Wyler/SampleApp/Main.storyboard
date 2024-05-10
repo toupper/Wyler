@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
     <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -17,61 +19,66 @@
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ocV-fu-pbY" userLabel="Ball">
                                 <rect key="frame" x="137.5" y="283.5" width="100" height="100"/>
-                                <color key="backgroundColor" systemColor="systemRedColor" red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="100" id="wid-gZ-g8b"/>
-                                    <constraint firstAttribute="height" constant="100" id="ygy-Vo-r7S"/>
-                                </constraints>
+                                <color key="backgroundColor" systemColor="systemRedColor"/>
                             </view>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uDo-iR-BPQ">
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uDo-iR-BPQ">
                                 <rect key="frame" x="16" y="60" width="343" height="30"/>
-                                <state key="normal" title="Start Recording"/>
+                                <state key="normal" title="Start Recording with Audio"/>
                                 <connections>
                                     <action selector="startRecordingButtonWasPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="uvr-V9-6le"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LVo-vQ-Ima">
-                                <rect key="frame" x="16" y="104" width="343" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" id="6TW-3M-xlN" userLabel="Start Recording without Audio">
+                                <rect key="frame" x="16" y="98" width="343" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="Start Recording Without Audio"/>
+                                <connections>
+                                    <action selector="startRecordingButtonWithoutAudioWasPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="ULf-QS-VT3"/>
+                                </connections>
+                            </button>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PgM-Qq-byK">
+                                <rect key="frame" x="310" y="204" width="51" height="31"/>
+                            </switch>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save To Camera Roll" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2sr-FT-l3J">
+                                <rect key="frame" x="16" y="209" width="286" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LVo-vQ-Ima">
+                                <rect key="frame" x="16" y="136" width="343" height="30"/>
                                 <state key="normal" title="Stop Recording"/>
                                 <connections>
                                     <action selector="stopRecordingButtonWasPressed:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Jnh-Vq-VFg"/>
                                 </connections>
                             </button>
-                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="PgM-Qq-byK">
-                                <rect key="frame" x="310" y="142" width="51" height="31"/>
-                            </switch>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Save To Camera Roll" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2sr-FT-l3J">
-                                <rect key="frame" x="16" y="147" width="286" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="width" secondItem="uDo-iR-BPQ" secondAttribute="width" id="5VQ-kT-uDa"/>
-                            <constraint firstItem="ocV-fu-pbY" firstAttribute="centerX" secondItem="6Tk-OE-BBY" secondAttribute="centerX" id="GKT-tW-2QX"/>
-                            <constraint firstItem="2sr-FT-l3J" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="UPc-tp-Oom"/>
-                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="trailing" secondItem="uDo-iR-BPQ" secondAttribute="trailing" id="c1L-K9-dti"/>
-                            <constraint firstItem="uDo-iR-BPQ" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="d7p-9t-Nq5"/>
-                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="leading" secondItem="uDo-iR-BPQ" secondAttribute="leading" id="gZK-Vx-gKp"/>
-                            <constraint firstItem="PgM-Qq-byK" firstAttribute="centerY" secondItem="2sr-FT-l3J" secondAttribute="centerY" id="jQb-ax-rxS"/>
-                            <constraint firstItem="ocV-fu-pbY" firstAttribute="centerY" secondItem="6Tk-OE-BBY" secondAttribute="centerY" id="kUZ-sg-rMp"/>
-                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="height" secondItem="uDo-iR-BPQ" secondAttribute="height" id="mZI-LG-rSx"/>
-                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="top" secondItem="uDo-iR-BPQ" secondAttribute="bottom" constant="14" id="myE-ab-Hf9"/>
-                            <constraint firstItem="uDo-iR-BPQ" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="60" id="paf-yI-Iyn"/>
-                            <constraint firstItem="2sr-FT-l3J" firstAttribute="top" secondItem="LVo-vQ-Ima" secondAttribute="bottom" constant="13" id="t6h-bt-iVz"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="PgM-Qq-byK" secondAttribute="trailing" constant="16" id="tuo-wM-cSP"/>
-                            <constraint firstItem="PgM-Qq-byK" firstAttribute="leading" secondItem="2sr-FT-l3J" secondAttribute="trailing" constant="8" id="ubl-5x-hQA"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="uDo-iR-BPQ" secondAttribute="trailing" constant="16" id="y7h-ee-AaE"/>
+                            <constraint firstItem="ocV-fu-pbY" firstAttribute="top" secondItem="2sr-FT-l3J" secondAttribute="bottom" constant="53.5" id="Afm-31-fuV"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="top" secondItem="6TW-3M-xlN" secondAttribute="bottom" constant="8" symbolic="YES" id="EFq-wY-IFp"/>
+                            <constraint firstItem="PgM-Qq-byK" firstAttribute="leading" secondItem="2sr-FT-l3J" secondAttribute="trailing" constant="8" symbolic="YES" id="G9J-gZ-182"/>
+                            <constraint firstItem="ocV-fu-pbY" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="Go9-RC-ryc"/>
+                            <constraint firstItem="6TW-3M-xlN" firstAttribute="top" secondItem="uDo-iR-BPQ" secondAttribute="bottom" constant="8" symbolic="YES" id="O7i-d4-O1m"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="centerX" secondItem="ocV-fu-pbY" secondAttribute="centerX" id="PQB-KS-nXQ"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="trailing" secondItem="6TW-3M-xlN" secondAttribute="trailing" id="Poo-HQ-11D"/>
+                            <constraint firstItem="uDo-iR-BPQ" firstAttribute="leading" secondItem="6TW-3M-xlN" secondAttribute="leading" id="RRW-3F-27J"/>
+                            <constraint firstItem="ocV-fu-pbY" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="137.5" id="Tda-gL-KQo"/>
+                            <constraint firstItem="PgM-Qq-byK" firstAttribute="top" secondItem="LVo-vQ-Ima" secondAttribute="bottom" constant="38" id="fm0-ub-kmg"/>
+                            <constraint firstItem="uDo-iR-BPQ" firstAttribute="trailing" secondItem="6TW-3M-xlN" secondAttribute="trailing" id="pcX-dV-GOi"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="leading" secondItem="2sr-FT-l3J" secondAttribute="leading" id="qWd-3E-WE6"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="trailing" secondItem="PgM-Qq-byK" secondAttribute="trailing" id="rRp-ay-Nam"/>
+                            <constraint firstItem="2sr-FT-l3J" firstAttribute="centerY" secondItem="PgM-Qq-byK" secondAttribute="centerY" id="rdk-sF-Tmu"/>
+                            <constraint firstItem="LVo-vQ-Ima" firstAttribute="leading" secondItem="6TW-3M-xlN" secondAttribute="leading" id="rvV-Yb-RLY"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="bouncingBall" destination="ocV-fu-pbY" id="hJM-VY-fuO"/>
                         <outlet property="cameraRollLabel" destination="2sr-FT-l3J" id="Y2i-Vn-K3I"/>
                         <outlet property="cameraRollSwitch" destination="PgM-Qq-byK" id="ALM-9R-s7x"/>
                         <outlet property="startRecordingButton" destination="uDo-iR-BPQ" id="8lG-lj-1kv"/>
+                        <outlet property="startRecordingWithoutAudioButton" destination="6TW-3M-xlN" id="sSz-KW-KWG"/>
                         <outlet property="stopRecordingButton" destination="LVo-vQ-Ima" id="jcu-7m-tfb"/>
                     </connections>
                 </viewController>
@@ -89,14 +96,15 @@
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="e3H-Tz-S4A">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <color key="backgroundColor" systemColor="systemGreenColor" red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" systemColor="systemGreenColor"/>
                             </imageView>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="3eF-Jl-gH5" userLabel="New Image View">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             </imageView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="dSa-tL-MSr"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="e3H-Tz-S4A" firstAttribute="centerX" secondItem="dSa-tL-MSr" secondAttribute="centerX" id="0AD-Ov-JO2"/>
                             <constraint firstItem="e3H-Tz-S4A" firstAttribute="height" secondItem="eeA-fg-7NM" secondAttribute="height" id="5QI-iw-F3S"/>
@@ -107,7 +115,6 @@
                             <constraint firstItem="3eF-Jl-gH5" firstAttribute="centerX" secondItem="e3H-Tz-S4A" secondAttribute="centerX" id="hvG-NJ-7aj"/>
                             <constraint firstItem="3eF-Jl-gH5" firstAttribute="height" secondItem="e3H-Tz-S4A" secondAttribute="height" id="zbD-nb-Oct"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="dSa-tL-MSr"/>
                     </view>
                     <connections>
                         <outlet property="imageView" destination="e3H-Tz-S4A" id="nfs-Lv-36I"/>
@@ -119,4 +126,15 @@
             <point key="canvasLocation" x="888.79999999999995" y="133.5832083958021"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemRedColor">
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>

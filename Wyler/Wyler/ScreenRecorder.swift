@@ -22,6 +22,7 @@ final public class ScreenRecorder {
   private var micAudioWriterInput: AVAssetWriterInput?
   private var appAudioWriterInput: AVAssetWriterInput?
   private var saveToCameraRoll = false
+  private var recordAudio = true
   let recorder = RPScreenRecorder.shared()
 
   /**
@@ -30,21 +31,26 @@ final public class ScreenRecorder {
   - Parameter outputURL: The output where the video will be saved. If nil, it saves it in the documents directory.
   - Parameter size: The size of the video. If nil, it will use the app screen size.
   - Parameter saveToCameraRoll: Whether to save it to camera roll. False by default.
+  - Parameter recordAudio: Whether to record audio as well as video. True by default for compatibility.
   - Parameter errorHandler: Called when an error is found
   */
   public func startRecording(to outputURL: URL? = nil,
                              size: CGSize? = nil,
                              saveToCameraRoll: Bool = false,
-                             handler: @escaping (Error?) -> Void) {
-    recorder.isMicrophoneEnabled = true
+                             recordAudio: Bool = true,
+                             errorHandler: @escaping (Error) -> Void) {
     do {
-        try createVideoWriter(in: outputURL)
+        try createVideoWriter(in: outputURL, error: errorHandler)
         addVideoWriterInput(size: size)
-        self.micAudioWriterInput = createAndAddAudioInput()
-        self.appAudioWriterInput = createAndAddAudioInput()
-        startCapture(handler: handler)
+        self.recordAudio = recordAudio
+        self.recorder.isMicrophoneEnabled = recordAudio
+        if(recordAudio) {
+           self.micAudioWriterInput = createAndAddAudioInput()
+           self.appAudioWriterInput = createAndAddAudioInput()
+        }
+        startCapture(error: errorHandler)
     } catch let err {
-        handler(err)
+        handler(errorHandler)
     }
   }
 
@@ -158,13 +164,24 @@ final public class ScreenRecorder {
         handler(error)
       } else {
         self.videoWriterInput?.markAsFinished()
-        self.micAudioWriterInput?.markAsFinished()
-        self.appAudioWriterInput?.markAsFinished()
+        if(self.recordAudio) {
+            self.micAudioWriterInput?.markAsFinished()
+            self.appAudioWriterInput?.markAsFinished()
+        }
         self.videoWriter?.finishWriting {
           self.saveVideoToCameraRollAfterAuthorized(handler: handler)
         }
       }
     })
+
+    self.videoWriterInput?.markAsFinished()
+    if(self.recordAudio) {
+        self.micAudioWriterInput?.markAsFinished()
+        self.appAudioWriterInput?.markAsFinished()
+    }
+    self.videoWriter?.finishWriting {
+      self.saveVideoToCameraRollAfterAuthorized(errorHandler: errorHandler)
+    }
   }
 
   private func saveVideoToCameraRollAfterAuthorized(handler: @escaping (Error?) -> Void) {
