@@ -10,8 +10,9 @@ import Foundation
 import ReplayKit
 import Photos
 
-public enum WylerError: Error {
-  case photoLibraryAccessNotGranted
+public enum ScreenRecorderError: Error {
+    case notAvailable
+    case photoLibraryAccessNotGranted
 }
 
 final public class ScreenRecorder {
@@ -23,10 +24,6 @@ final public class ScreenRecorder {
   private var saveToCameraRoll = false
   private var recordAudio = true
   let recorder = RPScreenRecorder.shared()
-
-  public init() {
-//    recorder.isMicrophoneEnabled = true
-  }
 
   /**
    Starts recording the content of the application screen. It works together with stopRecording
@@ -42,15 +39,19 @@ final public class ScreenRecorder {
                              saveToCameraRoll: Bool = false,
                              recordAudio: Bool = true,
                              errorHandler: @escaping (Error) -> Void) {
-    createVideoWriter(in: outputURL, error: errorHandler)
-    addVideoWriterInput(size: size)
-    self.recordAudio = recordAudio
-    self.recorder.isMicrophoneEnabled = recordAudio
-    if(recordAudio) {
-       self.micAudioWriterInput = createAndAddAudioInput()
-       self.appAudioWriterInput = createAndAddAudioInput()
+    do {
+        try createVideoWriter(in: outputURL)
+        addVideoWriterInput(size: size)
+        self.recordAudio = recordAudio
+        self.recorder.isMicrophoneEnabled = recordAudio
+        if(recordAudio) {
+           self.micAudioWriterInput = createAndAddAudioInput()
+           self.appAudioWriterInput = createAndAddAudioInput()
+        }
+        startCapture(error: errorHandler)
+    } catch let err {
+        errorHandler(err)
     }
-    startCapture(error: errorHandler)
   }
 
   private func checkPhotoLibraryAuthorizationStatus() {
@@ -60,7 +61,7 @@ final public class ScreenRecorder {
     }
   }
 
-  private func createVideoWriter(in outputURL: URL? = nil, error: (Error) -> Void) {
+  private func createVideoWriter(in outputURL: URL? = nil) throws {
     let newVideoOutputURL: URL
 
     if let passedVideoOutput = outputURL {
@@ -79,9 +80,8 @@ final public class ScreenRecorder {
     do {
       try videoWriter = AVAssetWriter(outputURL: newVideoOutputURL, fileType: AVFileType.mp4)
     } catch let writerError as NSError {
-      error(writerError)
       videoWriter = nil
-      return
+      throw writerError
     }
   }
 
@@ -93,7 +93,6 @@ final public class ScreenRecorder {
                                         AVVideoHeightKey: passingSize.height]
 
     let newVideoWriterInput = AVAssetWriterInput(mediaType: AVMediaType.video, outputSettings: videoSettings)
-
     self.videoWriterInput = newVideoWriterInput
     newVideoWriterInput.expectsMediaDataInRealTime = true
     videoWriter?.add(newVideoWriterInput)
@@ -115,11 +114,13 @@ final public class ScreenRecorder {
     return audioInput
   }
 
-  private func startCapture(error: @escaping (Error) -> Void) {
+  private func startCapture(handler: @escaping (Error?) -> Void) {
+    guard recorder.isAvailable else {
+        return handler(ScreenRecorderError.notAvailable)
+    }
     recorder.startCapture(handler: { (sampleBuffer, sampleType, passedError) in
       if let passedError = passedError {
-        error(passedError)
-        return
+        handler(passedError)
       }
 
       switch sampleType {
@@ -132,6 +133,7 @@ final public class ScreenRecorder {
       default:
         break
       }
+      handler(nil)
     })
   }
 
@@ -156,10 +158,19 @@ final public class ScreenRecorder {
 
   - Parameter errorHandler: Called when an error is found
   */
-  public func stoprecording(errorHandler: @escaping (Error) -> Void) {
-    RPScreenRecorder.shared().stopCapture( handler: { error in
+  public func stoprecording(handler: @escaping (Error?) -> Void) {
+    recorder.stopCapture( handler: { error in
       if let error = error {
-        errorHandler(error)
+        handler(error)
+      } else {
+        self.videoWriterInput?.markAsFinished()
+        if(self.recordAudio) {
+            self.micAudioWriterInput?.markAsFinished()
+            self.appAudioWriterInput?.markAsFinished()
+        }
+        self.videoWriter?.finishWriting {
+          self.saveVideoToCameraRollAfterAuthorized(handler: handler)
+        }
       }
     })
 
@@ -173,30 +184,32 @@ final public class ScreenRecorder {
     }
   }
 
-  private func saveVideoToCameraRollAfterAuthorized(errorHandler: @escaping (Error) -> Void) {
+  private func saveVideoToCameraRollAfterAuthorized(handler: @escaping (Error?) -> Void) {
     if PHPhotoLibrary.authorizationStatus() == .authorized {
-        self.saveVideoToCameraRoll(errorHandler: errorHandler)
+        self.saveVideoToCameraRoll(handler: handler)
     } else {
         PHPhotoLibrary.requestAuthorization({ (status) in
             if status == .authorized {
-                self.saveVideoToCameraRoll(errorHandler: errorHandler)
+                self.saveVideoToCameraRoll(handler: handler)
             } else {
-              errorHandler(WylerError.photoLibraryAccessNotGranted)
+              handler(ScreenRecorderError.photoLibraryAccessNotGranted)
           }
         })
     }
   }
 
-  private func saveVideoToCameraRoll(errorHandler: @escaping (Error) -> Void) {
+  private func saveVideoToCameraRoll(handler: @escaping (Error?) -> Void) {
     guard let videoOutputURL = self.videoOutputURL else {
-      return
+      return handler(nil)
     }
 
     PHPhotoLibrary.shared().performChanges({
       PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: videoOutputURL)
     }, completionHandler: { _, error in
       if let error = error {
-        errorHandler(error)
+          handler(error)
+      } else {
+          handler(nil)
       }
     })
   }
