@@ -40,7 +40,7 @@ final public class ScreenRecorder {
                              recordAudio: Bool = true,
                              errorHandler: @escaping (Error) -> Void) {
     do {
-        try createVideoWriter(in: outputURL, error: errorHandler)
+        try createVideoWriter(in: outputURL)
         addVideoWriterInput(size: size)
         self.recordAudio = recordAudio
         self.recorder.isMicrophoneEnabled = recordAudio
@@ -50,7 +50,7 @@ final public class ScreenRecorder {
         }
         startCapture(error: errorHandler)
     } catch let err {
-        handler(errorHandler)
+        errorHandler(err)
     }
   }
 
