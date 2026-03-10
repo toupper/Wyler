@@ -40,24 +40,23 @@ final public class ScreenRecorder {
                              recordAudio: Bool = true,
                              errorHandler: @escaping (Error) -> Void) {
     do {
+        resetWriterState()
         try createVideoWriter(in: outputURL)
         addVideoWriterInput(size: size)
+        self.saveToCameraRoll = saveToCameraRoll
         self.recordAudio = recordAudio
         self.recorder.isMicrophoneEnabled = recordAudio
-        if(recordAudio) {
+        if recordAudio {
            self.micAudioWriterInput = createAndAddAudioInput()
            self.appAudioWriterInput = createAndAddAudioInput()
         }
-        startCapture(error: errorHandler)
+        startCapture { error in
+            if let error {
+                errorHandler(error)
+            }
+        }
     } catch let err {
         errorHandler(err)
-    }
-  }
-
-  private func checkPhotoLibraryAuthorizationStatus() {
-    let status = PHPhotoLibrary.authorizationStatus()
-    if status == .notDetermined {
-      PHPhotoLibrary.requestAuthorization({ _ in })
     }
   }
 
@@ -97,7 +96,7 @@ final public class ScreenRecorder {
     newVideoWriterInput.expectsMediaDataInRealTime = true
     videoWriter?.add(newVideoWriterInput)
   }
-  
+
   private func createAndAddAudioInput() -> AVAssetWriterInput {
     let settings = [
         AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
@@ -110,7 +109,7 @@ final public class ScreenRecorder {
 
     audioInput.expectsMediaDataInRealTime = true
     videoWriter?.add(audioInput)
-    
+
     return audioInput
   }
 
@@ -146,7 +145,7 @@ final public class ScreenRecorder {
       self.videoWriterInput?.append(sampleBuffer)
     }
   }
-  
+
   private func add(sample: CMSampleBuffer, to writerInput: AVAssetWriterInput?) {
     if writerInput?.isReadyForMoreMediaData ?? false {
       writerInput?.append(sample)
@@ -159,42 +158,60 @@ final public class ScreenRecorder {
   - Parameter errorHandler: Called when an error is found
   */
   public func stoprecording(handler: @escaping (Error?) -> Void) {
-    recorder.stopCapture( handler: { error in
+    recorder.stopCapture { error in
       if let error = error {
         handler(error)
-      } else {
-        self.videoWriterInput?.markAsFinished()
-        if(self.recordAudio) {
-            self.micAudioWriterInput?.markAsFinished()
-            self.appAudioWriterInput?.markAsFinished()
-        }
-        self.videoWriter?.finishWriting {
-          self.saveVideoToCameraRollAfterAuthorized(handler: handler)
-        }
+        return
       }
-    })
 
-    self.videoWriterInput?.markAsFinished()
-    if(self.recordAudio) {
-        self.micAudioWriterInput?.markAsFinished()
-        self.appAudioWriterInput?.markAsFinished()
+      self.finishWriting(handler: handler)
     }
-    self.videoWriter?.finishWriting {
-      self.saveVideoToCameraRollAfterAuthorized(errorHandler: errorHandler)
+  }
+
+  @available(*, deprecated, renamed: "stopRecording(handler:)")
+  public func stopRecording(errorHandler: @escaping (Error?) -> Void) {
+    stoprecording(handler: errorHandler)
+  }
+
+  public func stopRecording(handler: @escaping (Error?) -> Void) {
+    stoprecording(handler: handler)
+  }
+
+  private func finishWriting(handler: @escaping (Error?) -> Void) {
+    videoWriterInput?.markAsFinished()
+    if recordAudio {
+        micAudioWriterInput?.markAsFinished()
+        appAudioWriterInput?.markAsFinished()
+    }
+
+    guard let videoWriter = videoWriter else {
+        return handler(nil)
+    }
+
+    videoWriter.finishWriting {
+        self.saveVideoToCameraRollAfterAuthorized(handler: handler)
+        self.resetWriterState()
     }
   }
 
   private func saveVideoToCameraRollAfterAuthorized(handler: @escaping (Error?) -> Void) {
-    if PHPhotoLibrary.authorizationStatus() == .authorized {
+    guard saveToCameraRoll else {
+        return handler(nil)
+    }
+
+    let status = photoLibraryAuthorizationStatus()
+    if isAuthorizedToSaveToPhotoLibrary(status) {
         self.saveVideoToCameraRoll(handler: handler)
-    } else {
-        PHPhotoLibrary.requestAuthorization({ (status) in
-            if status == .authorized {
+    } else if status == .notDetermined {
+        requestPhotoLibraryAuthorization { newStatus in
+            if self.isAuthorizedToSaveToPhotoLibrary(newStatus) {
                 self.saveVideoToCameraRoll(handler: handler)
             } else {
-              handler(ScreenRecorderError.photoLibraryAccessNotGranted)
-          }
-        })
+                handler(ScreenRecorderError.photoLibraryAccessNotGranted)
+            }
+        }
+    } else {
+        handler(ScreenRecorderError.photoLibraryAccessNotGranted)
     }
   }
 
@@ -212,5 +229,43 @@ final public class ScreenRecorder {
           handler(nil)
       }
     })
+  }
+
+  private func photoLibraryAuthorizationStatus() -> PHAuthorizationStatus {
+    if #available(iOS 14, *) {
+        return PHPhotoLibrary.authorizationStatus(for: .addOnly)
+    }
+
+    return PHPhotoLibrary.authorizationStatus()
+  }
+
+  private func requestPhotoLibraryAuthorization(handler: @escaping (PHAuthorizationStatus) -> Void) {
+    if #available(iOS 14, *) {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly, handler: handler)
+    } else {
+        PHPhotoLibrary.requestAuthorization(handler)
+    }
+  }
+
+  private func isAuthorizedToSaveToPhotoLibrary(_ status: PHAuthorizationStatus) -> Bool {
+    if status == .authorized {
+        return true
+    }
+
+    if #available(iOS 14, *), status == .limited {
+        return true
+    }
+
+    return false
+  }
+
+  private func resetWriterState() {
+    videoWriter = nil
+    videoWriterInput = nil
+    micAudioWriterInput = nil
+    appAudioWriterInput = nil
+    videoOutputURL = nil
+    saveToCameraRoll = false
+    recordAudio = true
   }
 }

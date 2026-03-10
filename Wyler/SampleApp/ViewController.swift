@@ -35,50 +35,50 @@ final class ViewController: UIViewController {
     bouncingBall.layer.removeAllAnimations()
     self.bouncingBall.alpha = 1
 
-    screenRecorder.stoprecording(errorHandler: { error in
-      debugPrint("Error when stop recording \(error)")
-    })
+    screenRecorder.stopRecording { error in
+      debugPrint("Error when stop recording \(String(describing: error))")
+    }
   }
 
-    @IBAction func startRecordingButtonWasPressed(_ sender: Any) {
+  @IBAction func startRecordingButtonWasPressed(_ sender: Any) {
     enableElements(isRecording: true)
 
     playSound()
     animateBall()
 
-        screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn,
-                                  errorHandler: { error in
+    screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn) { error in
       debugPrint("Error when recording \(error)")
-    })
+    }
   }
-    
-    @IBAction func startRecordingButtonWithoutAudioWasPressed(_ sender: Any) {
+
+  @IBAction func startRecordingButtonWithoutAudioWasPressed(_ sender: Any) {
     enableElements(isRecording: true)
 
     playSound()
     animateBall()
 
-        screenRecorder.startRecording(saveToCameraRoll: cameraRollSwitch.isOn,
-                                      recordAudio: false,
-                                  errorHandler: { error in
+    screenRecorder.startRecording(
+      saveToCameraRoll: cameraRollSwitch.isOn,
+      recordAudio: false
+    ) { error in
       debugPrint("Error when recording \(error)")
-    })
+    }
   }
 
   private func playSound() {
-      guard let url = Bundle.main.url(forResource: "MP3Sample", withExtension: "mp3") else { return }
+    guard let url = Bundle.main.url(forResource: "MP3Sample", withExtension: "mp3") else { return }
 
-      do {
-          try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
-          try AVAudioSession.sharedInstance().setActive(true)
+    do {
+      try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default)
+      try AVAudioSession.sharedInstance().setActive(true)
 
-          player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
+      player = try AVAudioPlayer(contentsOf: url, fileTypeHint: AVFileType.mp3.rawValue)
 
-          player?.play()
+      player?.play()
 
-      } catch let error {
-          print(error.localizedDescription)
-      }
+    } catch let error {
+      print(error.localizedDescription)
+    }
   }
 
   private func enableElements(isRecording: Bool) {
